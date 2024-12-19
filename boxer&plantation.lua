@@ -32,7 +32,7 @@ for _, obj in ipairs(slapplesFolder:GetChildren()) do
 end
 
 -- Ждём 0.5 секунды
-task.wait(3)
+task.wait(2.5)
 player.Character.HumanoidRootPart.CFrame = workspace.Lobby.SpawnLocation.CFrame
 wait(0.5)
 
