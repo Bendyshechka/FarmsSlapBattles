@@ -99,7 +99,7 @@ task.spawn(function()
 end)
 
 -- Ждём 4 секунды
-task.wait(3)
+task.wait(2)
 
 -- Выполняем сервер-хоп
 serverHop()
