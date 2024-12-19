@@ -30,7 +30,7 @@ for _, obj in ipairs(slapplesFolder:GetChildren()) do
 end
 
 -- Ждём 0.5 секунды
-task.wait(1)
+task.wait(1.5)
 
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
