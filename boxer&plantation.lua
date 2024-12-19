@@ -33,6 +33,8 @@ end
 
 -- Ждём 0.5 секунды
 task.wait(3)
+player.Character.HumanoidRootPart.CFrame = workspace.Lobby.SpawnLocation.CFrame
+wait(0.5)
 
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
