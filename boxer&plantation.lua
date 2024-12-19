@@ -13,6 +13,8 @@ if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
     player.Character.HumanoidRootPart.CFrame = teleportTarget.CFrame
 end
 
+wait(1)
+
 -- Телепорт всех объектов в Slapples к игроку
 for _, obj in ipairs(slapplesFolder:GetChildren()) do
     if obj:IsA("Model") and obj.PrimaryPart then
