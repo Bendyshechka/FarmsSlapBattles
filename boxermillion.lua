@@ -68,6 +68,7 @@ local function activateGhostMode()
         task.wait(0.3)
         replicatedStorage.Ghostinvisibilityactivated:FireServer()
         task.wait(0.3)
+        fireclickdetector(workspace.Lobby.Boxer.ClickDetector)
     else
         print("ClickDetector для Ghost не найден!")
     end
@@ -156,6 +157,7 @@ local function startFarming()
                         task.wait(0.3)
                         replicatedStorage.Ghostinvisibilityactivated:FireServer()
                         task.wait(0.3)
+                        fireclickdetector(workspace.Lobby.Boxer.ClickDetector)
                     else
                         print("ClickDetector для Ghost не найден!")
                     end
@@ -170,6 +172,7 @@ local function startFarming()
                         local nextMilestone = math.floor(currentSlaps / 100000) * 100000 + 100000
                         if nextMilestone - currentSlaps <= 500 then
                             print("Осталось 500 до " .. nextMilestone .. ", делаем серверхоп...")
+                            wait(1)
                             queue_on_teleport(_G.script)
                             serverHop()
                             break
