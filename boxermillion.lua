@@ -10,6 +10,15 @@ local teleportScript = [[
     if not game:IsLoaded() then
         game.Loaded:Wait()
     end
+    local players = game:GetService("Players")
+		local localPlayer = players.LocalPlayer  -- Получаем LocalPlayer
+
+		local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()  -- Ждем загрузки персонажа
+		local humanoidRootPart = character:WaitForChild("HumanoidRootPart")  -- Ждем загрузки HumanoidRootPart
+
+		-- Устанавливаем новый CFrame
+		humanoidRootPart.CFrame = CFrame.new(17902, -23, -3534)
+		fireclickdetector(ghostClickDetector)
     task.wait(0.3)
     fireclickdetector(workspace.Lobby.Ghost.ClickDetector)
     task.wait(0.3)
@@ -66,18 +75,10 @@ local teleportScript = [[
     end
 
     task.spawn(function()
-		local players = game:GetService("Players")
-		local localPlayer = players.LocalPlayer  -- Получаем LocalPlayer
-
-		local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()  -- Ждем загрузки персонажа
-		local humanoidRootPart = character:WaitForChild("HumanoidRootPart")  -- Ждем загрузки HumanoidRootPart
-
-		-- Устанавливаем новый CFrame
-		humanoidRootPart.CFrame = CFrame.new(17902, -23, -3534)
-		fireclickdetector(ghostClickDetector)
         task.wait(0.3)
         replicatedStorage.Ghostinvisibilityactivated:FireServer()
         task.wait(0.3)
+        workspace.Lobby.Boxer.ClickDetector.MaxActivationDistance = 1000
         fireclickdetector(workspace.Lobby.Boxer.ClickDetector)
         while true do
             game:GetService("ReplicatedStorage").Events.Boxing:FireServer(game.Players.LocalPlayer.Character.HumanoidRootPart)
