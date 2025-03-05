@@ -66,6 +66,14 @@ local teleportScript = [[
     end
 
     task.spawn(function()
+		local players = game:GetService("Players")
+		local localPlayer = players.LocalPlayer  -- Получаем LocalPlayer
+
+		local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()  -- Ждем загрузки персонажа
+		local humanoidRootPart = character:WaitForChild("HumanoidRootPart")  -- Ждем загрузки HumanoidRootPart
+
+		-- Устанавливаем новый CFrame
+		humanoidRootPart.CFrame = CFrame.new(17902, -23, -3534)
 		fireclickdetector(ghostClickDetector)
         task.wait(0.3)
         replicatedStorage.Ghostinvisibilityactivated:FireServer()
@@ -86,6 +94,7 @@ local teleportScript = [[
                 if slaps and slaps.Value >= 1000000 then
                     local nextMilestone = math.floor(slaps.Value / 100000) * 100000 + 100000
                     if nextMilestone - slaps.Value <= 500 then
+			wait(1)
                         serverHop()
                     end
                 end
