@@ -18,7 +18,7 @@ local teleportScript = [[
 
 		-- Устанавливаем новый CFrame
 		humanoidRootPart.CFrame = CFrame.new(17902, -23, -3534)
-		fireclickdetector(ghostClickDetector)
+		fireclickdetector(workspace.Lobby.Ghost.ClickDetector)
     task.wait(0.3)
     fireclickdetector(workspace.Lobby.Ghost.ClickDetector)
     task.wait(0.3)
