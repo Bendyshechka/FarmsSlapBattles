@@ -65,7 +65,7 @@ if target then
     for i = 1, _G.configsigma.Power do
         game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
     end
-    wait(3)
+    wait(2)
     local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
