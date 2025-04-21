@@ -108,7 +108,7 @@ if #validPlayers > 0 then
     
     -- Атакуем SnowHit'ами
     local snowHit = game.ReplicatedStorage.SnowHit
-    for i = 1, _G.Power do
+    for i = 1, 70 do
         print(_G.Power)
         snowHit:FireServer(targetRoot)
     end
