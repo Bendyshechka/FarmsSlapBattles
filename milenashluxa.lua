@@ -69,9 +69,6 @@ for _, player in ipairs(Players:GetPlayers()) do
     if player == localPlayer then continue end
     
     -- Ожидаем загрузку персонажа (если его нет)
-    if not player.Character then
-        player.CharacterAdded:Wait()
-    end
     local targetCharacter = player.Character
     
     -- Ожидаем Humanoid и проверяем его
