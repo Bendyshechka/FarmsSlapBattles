@@ -56,8 +56,12 @@ end
 local target = validPlayers[math.random(1, #validPlayers)]
 if target then
     print("Выбранный игрок:", target.Name)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
-    wait(0.5)
+    task.spawn(function()
+        while true do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
+            wait(0.5)
+        end
+    end)
     for i = 1, _G.configsigma.Power do
         game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
     end
