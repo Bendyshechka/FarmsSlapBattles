@@ -127,7 +127,7 @@ for _, obj in pairs(slapples:GetChildren()) do
     end
 end
 
-task.wait(2)
+task.wait(1)
 
 -- Ищем подходящего игрока для атаки
 local validPlayers = {}
