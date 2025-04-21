@@ -72,7 +72,7 @@ for _, player in ipairs(Players:GetPlayers()) do
     local targetCharacter = player.Character
     
     -- Ожидаем Humanoid и проверяем его
-    local humanoid = targetCharacter:WaitForChild("Humanoid")
+    local humanoid = targetCharacter:FindFirstChild("Humanoid")
     if humanoid.Health <= 0 then continue end
     
     -- Проверяем, в арене ли игрок
