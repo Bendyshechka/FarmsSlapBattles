@@ -52,7 +52,7 @@ if target then
     print("Выбранный игрок:", target.Name)
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
     wait(0.5)
-    for i = 1, 10000 do
+    for i = 1, config.Power do
         game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
     end
     wait(3)
