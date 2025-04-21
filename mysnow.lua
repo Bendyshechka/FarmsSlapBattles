@@ -22,8 +22,14 @@ local function EquipGlove(Glove)
 end
 EquipGlove("Snow")
 wait(1)
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Lobby.Teleport2.CFrame
-wait(3)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Lobby.Teleport1.CFrame
+wait(1)
+for _, obj in pairs(game.Workspace:WaitForChild("Arena"):WaitForChild("island5"):WaitForChild("Slapples"):GetChildren()) do
+    if obj:WaitForChild("Glove") then
+        obj:WaitForChild("Glove").CFrame = game.Workspace:WaitForChild(game.Players.LocalPlayer.Name):WaitForChild("HumanoidRootPart").CFrame
+    end
+end
+wait(2)
 local Players = game:GetService("Players")
 local localPlayer = Players.LocalPlayer
 local validPlayers = {}
@@ -50,8 +56,12 @@ end
 local target = validPlayers[math.random(1, #validPlayers)]
 if target then
     print("Выбранный игрок:", target.Name)
-    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
-    wait(0.5)
+    task.spawn(function()
+        while true do
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
+            wait(0.5)
+        end
+    end)
     for i = 1, _G.configsigma.Power do
         game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
     end
