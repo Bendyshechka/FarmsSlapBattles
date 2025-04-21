@@ -1,11 +1,68 @@
-game.Workspace:WaitForChild(game.Players.LocalPlayer.Name):WaitForChild("HumanoidRootPart").CFrame = game.Workspace:WaitForChild("Lobby"):WaitForChild("Teleport1").CFrame
-wait(0.5)
+local function EquipGlove(Glove)
+	for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
+      -- Check if the name contains the character '{'
+      if v.Name:find("{") then
+          local args = {
+              [1] = Glove,
+			  [2] = true
+          }
+  
+          -- Check if v is a RemoteEvent and can FireServer
+          if v:IsA("RemoteEvent") then
+              v:FireServer(unpack(args))
+          elseif v:IsA("RemoteFunction") then
+              -- If it's a RemoteFunction, use InvokeServer
+              local result = v:InvokeServer(unpack(args))
+              print("Result from InvokeServer:", result)  -- Optional: Print the result
+          else
+              print("v is neither a RemoteEvent nor a RemoteFunction.")
+          end
+      end
+  end
+end
+EquipGlove("Snow")
+wait(1)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.Lobby.Teleport1.CFrame
+wait(1)
 for _, obj in pairs(game.Workspace:WaitForChild("Arena"):WaitForChild("island5"):WaitForChild("Slapples"):GetChildren()) do
-    if obj:FindFirstChild("Glove") then
-        obj:FindFirstChild("Glove").CFrame = game.Workspace:WaitForChild(game.Players.LocalPlayer.Name):WaitForChild("HumanoidRootPart").CFrame
+    if obj:WaitForChild("Glove") then
+        obj:WaitForChild("Glove").CFrame = game.Workspace:WaitForChild(game.Players.LocalPlayer.Name):WaitForChild("HumanoidRootPart").CFrame
     end
 end
-local TeleportService = game:GetService("TeleportService")
+wait(2)
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+local validPlayers = {}
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player == localPlayer then continue end -- Пропускаем себя
+    
+    local character = player.Character
+    if not character then continue end -- Если нет персонажа
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid or humanoid.Health <= 0 then continue end -- Если мёртв
+    
+    local isInArena = character:FindFirstChild("isInArena")
+    if not isInArena or not isInArena.Value then continue end -- Если не в арене
+    
+    local hasRock = character:FindFirstChild("rock")
+    if hasRock then continue end -- Если есть rock
+    
+    table.insert(validPlayers, player) -- Добавляем подходящего игрока
+end
+
+-- Выбираем случайного игрока из подходящих
+local target = validPlayers[math.random(1, #validPlayers)]
+if target then
+    print("Выбранный игрок:", target.Name)
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
+    wait(0.5)
+    for i = 1, _G.configsigma.Power do
+        game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
+    end
+    wait(3)
+    local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 
@@ -55,7 +112,7 @@ local function serverHop()
             local ID = tostring(v.id)
             local Possible = true
 
-            if tonumber(v.maxPlayers) > tonumber(v.playing) then
+            if tonumber(v.maxPlayers) < tonumber(v.playing) then
                 for _, Existing in pairs(AllIDs) do
                     if ID == tostring(Existing) then
                         Possible = false
@@ -78,5 +135,7 @@ local function serverHop()
     -- Если подходящий сервер не найден, телепортируем на случайный
     TeleportService:Teleport(placeId)
 end
-wait(1)
-serverHop()
+    serverHop()
+else
+    print("Нет подходящих игроков")
+end
