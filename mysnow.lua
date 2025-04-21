@@ -1,5 +1,5 @@
 local function EquipGlove(Glove)
-	for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
+	for i, v in pairs(game:GetService("ReplicatedStorage"):WaitForChild("_NETWORK"):GetChildren()) do
       -- Check if the name contains the character '{'
       if v.Name:find("{") then
           local args = {
@@ -62,6 +62,7 @@ if target then
             wait(0.5)
         end
     end)
+    wait(0.5)
     for i = 1, _G.configsigma.Power do
         game:GetService("ReplicatedStorage").SnowHit:FireServer(target.Character.HumanoidRootPart)
     end
