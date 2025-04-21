@@ -12,6 +12,7 @@ local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 -- Ждём загрузку HumanoidRootPart (на случай, если персонаж ещё не полностью загрузился)
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
+-- Конфиг
 
 -- Функция для надежного экипирования перчатки
 local function EquipGlove(Glove)
@@ -92,24 +93,23 @@ if #validPlayers > 0 then
     print("Выбранный игрок:", target.Name)
     
     -- Ожидаем загрузку его персонажа (на всякий случай)
-    if not target.Character then
-        target.CharacterAdded:Wait()
-    end
     local targetCharacter = target.Character
     local targetRoot = targetCharacter:WaitForChild("HumanoidRootPart")
     
     -- Телепортируемся к нему и атакуем
     task.spawn(function()
-        while task.wait(0.5) do
+        while true do
             humanoidRootPart.CFrame = targetRoot.CFrame
+            wait(0.5)
         end
     end)
     
     task.wait(0.5)
     
     -- Атакуем SnowHit'ами
-    local snowHit = ReplicatedStorage:WaitForChild("SnowHit")
+    local snowHit = game.ReplicatedStorage.SnowHit
     for i = 1, _G.configsigma.Power do
+        print("sss")
         snowHit:FireServer(targetRoot)
     end
     
