@@ -112,11 +112,13 @@ end)
 wait(1)
 game:GetService("ReplicatedStorage").RunMasteryAbility:FireServer()
 wait(12)
-for _, obj in pairs(game.Players:GetPlayers()) do
+task.spawn(function()
+    for _, obj in pairs(game.Players:GetPlayers()) do
 					if obj.Name ~= game.Players.LocalPlayer.Name then
-						obj.Character.HumanoidRootPart:PivotTo(game.Players.LocalPlayer.Character.Skull.Hitbox.CFrame)
+						obj.Character.HumanoidRootPart:PivotTo(game.Players.LocalPlayer.Character:FindFirstChild("Skull"):FindFirstChild("Hitbox").CFrame)
 					end
 				end
+end)
 
 wait(1)
 -- В любом случае делаем сервер-хоп (если сервер новый, добавляем его в список)
