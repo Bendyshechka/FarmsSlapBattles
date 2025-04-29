@@ -1,15 +1,42 @@
+local teleportConnection = nil
+
+-- Функция для активации/деактивации закрепления
+local function toggleAnchor(enable)
+    if teleportConnection then
+        teleportConnection:Disconnect()
+        teleportConnection = nil
+    end
+    
+    if enable then
+        teleportConnection = game:GetService("RunService").Heartbeat:Connect(function()
+            local player = game.Players.LocalPlayer
+            if player.Character then
+                local root = player.Character:FindFirstChild("HumanoidRootPart")
+                if root then
+                    root.CFrame = CFrame.new(17902, -15, -3534)
+                end
+            end
+        end)
+    end
+end
+
 local currentJobId = game.JobId
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Workspace = game:GetService("Workspace")
 
 -- Проверяем, есть ли этот сервер в списке для избегания
 local AllIDs = {}
 local fileLoaded = pcall(function()
-    AllIDs = HttpService:JSONDecode(readfile("server-hop-temp.json"))
+    AllIDs = HttpService:JSONDecode(readfile("server-hp-temp.json"))
 end)
 
 if not fileLoaded then
     AllIDs = {}
     pcall(function()
-        writefile("server-hop-temp.json", HttpService:JSONEncode(AllIDs))
+        writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
     end)
 end
 
@@ -69,30 +96,13 @@ if shouldHop then
 end
 
 print("Новый сервер, продолжаем выполнение...")
-
-local teleportConnection = nil
-
--- Функция для активации/деактивации закрепления
-local function toggleAnchor(enable)
-    if teleportConnection then
-        teleportConnection:Disconnect()
-        teleportConnection = nil
-    end
-    
-    if enable then
-        teleportConnection = game:GetService("RunService").Heartbeat:Connect(function()
-            local player = game.Players.LocalPlayer
-            if player.Character then
-                local root = player.Character:FindFirstChild("HumanoidRootPart")
-                if root then
-                    root.CFrame = CFrame.new(17902, -15, -3534)
-                end
-            end
-        end)
-    end
-end
-
+task.spawn(function()
+    toggleAnchor(true)
+end)
 workspace:WaitForChild("TournamentIsland").Name = "TournamentIsland"
+task.spawn(function()
+    toggleAnchor(false)
+end)
 wait(1)
 game:GetService("ReplicatedStorage").Events.Tournament.TournamentResponse:FireServer(true)
 wait(5)
@@ -112,7 +122,7 @@ wait(1)
 -- В любом случае делаем сервер-хоп (если сервер новый, добавляем его в список)
 table.insert(AllIDs, currentJobId)
 pcall(function()
-    writefile("server-hop-temp.json", HttpService:JSONEncode(AllIDs))
+    writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
 end)
 
 print("Выполняем сервер-хоп...")
