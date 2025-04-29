@@ -1,4 +1,26 @@
 local teleportConnection = nil
+local function EquipGlove(Glove)
+	for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
+      -- Check if the name contains the character '{'
+      if v.Name:find("{") then
+          local args = {
+              [1] = Glove,
+			  [2] = true
+          }
+  
+          -- Check if v is a RemoteEvent and can FireServer
+          if v:IsA("RemoteEvent") then
+              v:FireServer(unpack(args))
+          elseif v:IsA("RemoteFunction") then
+              -- If it's a RemoteFunction, use InvokeServer
+              local result = v:InvokeServer(unpack(args))
+              print("Result from InvokeServer:", result)  -- Optional: Print the result
+          else
+              print("v is neither a RemoteEvent nor a RemoteFunction.")
+          end
+      end
+  end
+end
 
 -- Функция для активации/деактивации закрепления
 local function toggleAnchor(enable)
@@ -97,10 +119,12 @@ end
 
 print("Новый сервер, продолжаем выполнение...")
 task.spawn(function()
+    EquipGlove("Diamond")
     toggleAnchor(true)
 end)
 workspace:WaitForChild("TournamentIsland").Name = "TournamentIsland"
 task.spawn(function()
+    EquipGlove("Run")
     toggleAnchor(false)
 end)
 wait(1)
