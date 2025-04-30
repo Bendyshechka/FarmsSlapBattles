@@ -1,3 +1,11 @@
+if game.Workspace:FindFirstChild("Sigma") == nil then
+    local s = Instance.new("Model", game.Workspace)
+    s.Name = "Sigma"
+    print("text")
+else
+    return
+end
+
 local teleportConnection = nil
 local function EquipGlove(Glove)
 	for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
@@ -72,42 +80,93 @@ for _, serverId in pairs(AllIDs) do
 end
 
 -- Улучшенная функция сервер-хопа (полностью рандомный сервер)
+local MAX_HISTORY = 20 -- Макс. сохранённых серверов (чтобы файл не рос бесконечно)
+local MIN_PLAYERS = 7  -- Минимум игроков на сервере
+local MAX_PLAYER_PERCENT = 0.85 -- Макс. заполненность сервера (85%)
+
 local function RandomServerHop()
     local placeId = game.PlaceId
     local cursor = ""
     local servers = {}
+    local suitableServers = {}
 
-    -- Собираем все доступные серверы
+    -- Загружаем историю серверов
+    local AllIDs = {}
+    local fileLoaded = pcall(function()
+        AllIDs = HttpService:JSONDecode(readfile("server-hp-temp.json")) or {}
+    end)
+
+    -- Очищаем старые записи (если их больше MAX_HISTORY)
+    if #AllIDs > MAX_HISTORY then
+        local overflow = #AllIDs - MAX_HISTORY
+        table.move(AllIDs, overflow + 1, #AllIDs, 1)
+        for i = 1, overflow do
+            table.remove(AllIDs)
+        end
+        pcall(function()
+            writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
+        end)
+    end
+
+    -- Собираем серверы с API
     while true do
         local success, response = pcall(function()
             return HttpService:JSONDecode(game:HttpGet(
                 "https://games.roblox.com/v1/games/" .. placeId .. "/servers/Public?sortOrder=Asc&limit=100" .. 
-                (cursor ~= "" and "&cursor=" .. cursor or "")
+                (cursor ~= "" and "&cursor=" .. cursor or ""),
+                true
             ))
         end)
 
         if not success or not response or not response.data then
+            warn("⚠️ Ошибка загрузки серверов: " .. (response and tostring(response) or "unknown"))
             break
         end
 
+        -- Фильтруем серверы: не пустые, не полные, не посещённые ранее
         for _, server in ipairs(response.data) do
-            table.insert(servers, tostring(server.id))
+            local serverId = tostring(server.id)
+            local playing = tonumber(server.playing) or 0
+            local maxPlayers = tonumber(server.maxPlayers) or 16 -- дефолтный лимит
+
+            -- Проверяем, подходит ли сервер
+            local isSuitable = (
+                playing >= MIN_PLAYERS and
+                playing <= (maxPlayers * MAX_PLAYER_PERCENT) and
+                not table.find(AllIDs, serverId)
+            )
+
+            if isSuitable then
+                table.insert(suitableServers, {
+                    id = serverId,
+                    players = playing
+                })
+            end
         end
 
-        if not response.nextPageCursor or response.nextPageCursor == "" then
-            break
-        else
-            cursor = response.nextPageCursor
-        end
+        if not response.nextPageCursor then break end
+        cursor = response.nextPageCursor
     end
 
-    -- Если серверы найдены, выбираем случайный
-    if #servers > 0 then
-        local randomServer = servers[math.random(1, #servers)]
-        TeleportService:TeleportToPlaceInstance(placeId, randomServer, Players.LocalPlayer)
+    -- Выбираем сервер:
+    local targetServerId
+    if #suitableServers > 0 then
+        -- Предпочитаем серверы с игроками (но не самые заполненные)
+        table.sort(suitableServers, function(a, b)
+            return a.players > b.players
+        end)
+        local topN = math.min(5, #suitableServers) -- Берём из топ-5
+        targetServerId = suitableServers[math.random(1, topN)].id
+    elseif #servers > 0 then
+        -- Если нет подходящих — случайный из всех
+        targetServerId = servers[math.random(1, #servers)]
+    end
+
+    -- Телепортируемся
+    if targetServerId then
+        TeleportService:TeleportToPlaceInstance(placeId, targetServerId, Players.LocalPlayer)
     else
-        -- Если не удалось получить серверы, просто телепортируем в основное место
-        TeleportService:Teleport(placeId)
+        TeleportService:Teleport(placeId) -- Фолбэк
     end
 end
 
@@ -118,11 +177,16 @@ if shouldHop then
 end
 
 print("Новый сервер, продолжаем выполнение...")
+-- В любом случае делаем сервер-хоп (если сервер новый, добавляем его в список)
 task.spawn(function()
     EquipGlove("Diamond")
     toggleAnchor(true)
 end)
 workspace:WaitForChild("TournamentIsland").Name = "TournamentIsland"
+table.insert(AllIDs, currentJobId)
+pcall(function()
+    writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
+end)
 task.spawn(function()
     EquipGlove("Run")
     toggleAnchor(false)
@@ -145,11 +209,6 @@ task.spawn(function()
 end)
 
 wait(1)
--- В любом случае делаем сервер-хоп (если сервер новый, добавляем его в список)
-table.insert(AllIDs, currentJobId)
-pcall(function()
-    writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
-end)
 
 print("Выполняем сервер-хоп...")
 RandomServerHop()
