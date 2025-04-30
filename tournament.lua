@@ -202,7 +202,7 @@ game:GetService("ReplicatedStorage").RunMasteryAbility:FireServer()
 wait(12)
 task.spawn(function()
     for _, obj in pairs(game.Players:GetPlayers()) do
-					if obj.Name ~= game.Players.LocalPlayer.Name then
+					if obj.Name ~= game.Players.LocalPlayer.Name and obj.Character:FindFirstChild("rock") == nil and obj.Character.Humanoid.Sit == false then
 						obj.Character.HumanoidRootPart:PivotTo(game.Players.LocalPlayer.Character:FindFirstChild("Skull"):FindFirstChild("Hitbox").CFrame)
 					end
 				end
