@@ -8,12 +8,12 @@ end
 
 local teleportConnection = nil
 local function EquipGlove(Glove)
-	for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
+ for i, v in pairs(game:GetService("ReplicatedStorage")._NETWORK:GetChildren()) do
       -- Check if the name contains the character '{'
       if v.Name:find("{") then
           local args = {
               [1] = Glove,
-			  [2] = true
+     [2] = true
           }
   
           -- Check if v is a RemoteEvent and can FireServer
@@ -122,8 +122,7 @@ local function RandomServerHop()
             warn("⚠️ Ошибка загрузки серверов: " .. (response and tostring(response) or "unknown"))
             break
         end
-
-        -- Фильтруем серверы: не пустые, не полные, не посещённые ранее
+-- Фильтруем серверы: не пустые, не полные, не посещённые ранее
         for _, server in ipairs(response.data) do
             local serverId = tostring(server.id)
             local playing = tonumber(server.playing) or 0
@@ -179,12 +178,9 @@ end
 print("Новый сервер, продолжаем выполнение...")
 -- В любом случае делаем сервер-хоп (если сервер новый, добавляем его в список)
 task.spawn(function()
-    EquipGlove("Run")
-    toggleAnchor(true)
-    wait(1)
-    game:GetService("ReplicatedStorage").RunMasteryAbility:FireServer()
-    wait(1)
+    wait(3)
     EquipGlove("Diamond")
+    toggleAnchor(true)
 end)
 workspace:WaitForChild("TournamentIsland").Name = "TournamentIsland"
 table.insert(AllIDs, currentJobId)
@@ -192,7 +188,7 @@ pcall(function()
     writefile("server-hp-temp.json", HttpService:JSONEncode(AllIDs))
 end)
 task.spawn(function()
-    EquipGlove("Diamond")
+    EquipGlove("Run")
     toggleAnchor(false)
 end)
 wait(1)
@@ -202,13 +198,16 @@ task.spawn(function()
     toggleAnchor(true)
 end)
 wait(1)
-wait(12)
+game:GetService("ReplicatedStorage").RunMasteryAbility:FireServer()
+wait(1)
+EquipGlove("Diamond")
+wait(11)
 task.spawn(function()
     for _, obj in pairs(game.Players:GetPlayers()) do
-					if obj.Name ~= game.Players.LocalPlayer.Name and obj.Character:FindFirstChild("rock") == nil and obj.Character.Humanoid.Sit == false then
-						obj.Character.HumanoidRootPart:PivotTo(game.Players.LocalPlayer.Character:FindFirstChild("Skull"):FindFirstChild("Hitbox").CFrame)
-					end
-				end
+     if obj.Name ~= game.Players.LocalPlayer.Name and obj.Character:FindFirstChild("rock") == nil and obj.Character.Humanoid.Sit == false then
+      obj.Character.HumanoidRootPart:PivotTo(game.Players.LocalPlayer.Character:FindFirstChild("Skull"):FindFirstChild("Hitbox").CFrame)
+     end
+    end
 end)
 
 wait(1)
