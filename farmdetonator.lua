@@ -333,6 +333,7 @@ end
                                     if item.Name == "Bomb" or item.Name == "Apple" then
                                         itemsLeft = false
                                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = item.Handle.CFrame
+                                        game.Players.LocalPlayer.Character.Humanoid.Sit = false
                                         item.Handle.Anchored = true
                                         task.wait(0.5)
                                         local VirtualInputManager = game:GetService("VirtualInputManager")
